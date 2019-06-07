@@ -1,10 +1,18 @@
+// Bootcamp Homework #12
+// Paul Raab
+// Raab Enterprises LLC
+// 6/7/2019
+// Bamazon
+// 
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require('easy-table')
 
+// Define app variables
 var departmentName = "";
 var overheadCosts = 0;
 
+// Create database connection
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -19,11 +27,13 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
+// Connect to data base and call initial function connection
 connection.connect(function (err) {
     if (err) throw err;
     displayMenu();
 });
 
+// Display menu of options
 function displayMenu() {
     inquirer
         .prompt({
@@ -32,6 +42,7 @@ function displayMenu() {
             message: "What would you like to do?",
             choices: [
                 "View Product Sales By Department",
+                "View Departments",
                 "Add New Department",
                 "Exit"
             ]
@@ -41,10 +52,13 @@ function displayMenu() {
                 case "View Product Sales By Department":
                     viewProductSalesByDepartment();
                     break;
-                case "Add New Department":
-                    addNewDepartment();
-                    break;
-                case "Exit":
+                    case "View Departments":
+                            viewDepartments();
+                            break;
+                            case "Add New Department":
+                                    addNewDepartment();
+                                    break;
+                                        case "Exit":
                     process.exit();
                     break;
             }
@@ -63,6 +77,22 @@ function viewProductSalesByDepartment() {
             table.cell('Name', product.department_name)
             table.cell('Price, USD', product.overhead_costs, Table.number(2))
             table.cell('Quantity', product.total_profit, Table.number(2))
+            table.newRow()
+        })
+        console.log(table.toString())
+        displayMenu();
+    });
+}
+
+// View departments
+function viewDepartments() {
+    var query = "SELECT department_id, department_name, overhead_costs FROM bamazon.departments";
+    connection.query(query, function (err, res) {
+        var table = new Table;
+        res.forEach(function (department) {
+            table.cell('Department Id', department.department_id)
+            table.cell('Name', department.department_name)
+            table.cell('Overhead Costs, USD', department.overhead_costs, Table.number(2))
             table.newRow()
         })
         console.log(table.toString())
@@ -95,6 +125,7 @@ function addNewDepartment() {
     });
 };
 
+// Add new department to datasbase
 function addNewDepartmentDB() {
     connection.query(
         "INSERT INTO bamazon.departments SET ?", {

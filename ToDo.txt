@@ -1,0 +1,4 @@
+Don't allow duplicate Departments by Name
+Don't allow duplicate Products by Name and Department
+More checking - no empty values - allow for updates
+

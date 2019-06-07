@@ -1,15 +1,22 @@
+// Bootcamp Homework #12
+// Paul Raab
+// Raab Enterprises LLC
+// 6/7/2019
+// Bamazon
+// 
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require('easy-table')
 
+// Define app variables
 var productId = "";
 var productName = "";
 var departmentName = "";
 var price = 0;
 var quantity = 0;
 var stockQuantity = 0;
-var productSales = 0.0;
 
+// Create database connection
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -24,11 +31,13 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
+// Connect to data base and call initial function connection
 connection.connect(function (err) {
     if (err) throw err;
     displayMenu();
 });
 
+// Display menu of options
 function displayMenu() {
     inquirer
         .prompt({
@@ -125,6 +134,7 @@ function askQuantity() {
     })
 }
 
+// Update inventory
 function updateInventory() {
     var query = "SELECT stock_quantity FROM bamazon.products WHERE product_id = ?";
     connection.query(query, productId, function (err, res) {
@@ -191,6 +201,7 @@ function addNewProduct() {
     });
 };
 
+// Add new product to database
 function addNewProductDB() {
     var departmentId = 0;
     connection.query(
