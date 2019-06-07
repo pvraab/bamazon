@@ -27,3 +27,19 @@ CREATE TABLE IF NOT EXISTS `bamazon`.`products` (
         ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
+-- Create Product Sales by Department view
+CREATE OR REPLACE VIEW prod_sales_by_dept AS
+SELECT 
+    a.department_id,
+    a.department_name,
+    a.overhead_costs,
+    b.product_sales,
+    SUM(b.product_sales - a.overhead_costs) total_profit
+FROM
+    departments a,
+    products b
+WHERE
+    a.department_id = b.department_id
+GROUP BY b.department_id;
+
+
