@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Departments Page</title>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- Bootstrap scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="jumbotron">
+      <h1 class="text-center"><span class="fa fa-fire"></span></h1>
+      <hr>
+      <h2 class="text-center">Departments</h2>
+      <br>
+
+      <div class="text-center">
+          <a href="/departments/add"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>Add
+            Departments</button></a>
+        <a href="/products"><button class="btn btn-lg btn-danger"><span class="fa fa-credit-card"></span>
+            Products</button></a>
+        <a href="/"><button class="btn btn-lg btn-default"><span class="fa fa-home"></span></button></a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+
+        <!-- Departments -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h4>Departments</h4>
+          </div>
+          <div class="card-body">
+            <table class="table table-sm table-hover" id='departments-table'>
+              <thead>
+                <tr>
+                  <th scope="col">Department ID</th>
+                  <th scope="col">Department Name</th>
+                  <th scope="col">Overheaad Costs</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <a href="/db/products">DB Products List</a>
+        <a href="/db/departments">DB Departments List</a>
+        <a href="/db/deptProdSales">DB Department Sales List</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- BELOW CODE IS CRITICAL. IT HANDLES HOW FORM DATA IS LOADED FROM OUR SERVER -->
+  <script type="text/javascript">
+    // In this code, jQuery is used to "download" the data from our server
+    // We then dynamically display this content in our table. This is very similar to the group projects you just completed.
+    // It's also very similar to the NYT search application. In fact, I copied a ton of code from there.
+
+    function runDepartmentQuery() {
+      // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
+      $.ajax({
+          url: "/db/departments",
+          method: "GET"
+        })
+        .then(function (tableData) {
+
+          // Loop through and display each of the customers
+          for (var i = 0; i < tableData.length; i++) {
+
+            // Create update and remove buttons
+            // var updateButton = $("<button>").html("<span class='glyphicon glyphicon-edit'>U</span>").addClass(
+            //   "updateButton").attr("data-key", key);
+            // var removeButton = $("<button>").html("<span class='glyphicon glyphicon-remove'>R</span>").addClass(
+            //   "removeButton").attr("data-key", key);
+
+            // Create the new row
+            var newRow = $("<tr>").append(
+              $("<td>").text(tableData[i].departmentId),
+              $("<td>").text(tableData[i].departmentName),
+              $("<td>").text(tableData[i].overheadCosts)
+            );
+            // newRow.attr("data-key", key);
+            // Append the new row to the table
+            $("#departments-table > tbody").append(newRow);
+
+          }
+        });
+    }
+
+    // This function resets all of the data in our tables. This is intended to let you restart a demo.
+    function clearTable() {
+      alert("Clearing...");
+
+      // Clear the tables on the server and then empty the elements on the client
+      $.ajax({
+        url: "/api/clear",
+        method: "POST"
+      }).then(function () {
+        $("#waitList").empty();
+        $("#tableList").empty();
+      });
+    }
+
+    $("#clear").on("click", clearTable);
+
+    // Run Queries!
+    // ==========================================
+    runDepartmentQuery();
+  </script>
+
+</body>
+
+
+
+</html>

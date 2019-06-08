@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Product Add Page</title>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- Bootstrap scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="jumbotron">
+      <h1 class="text-center">
+        <span class="fa fa-fire"></span> Products</h1>
+      <hr>
+      <h2 class="text-center">Manage Your Products</h2>
+      <br>
+      <div class="text-center">
+        <a href="/products"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>View
+            Products</button></a>
+        <a href="/departments"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>View
+            Departments</button></a>
+        <a href="/"><button class="btn btn-lg btn-default"><span class="fa fa-home"></span></button></a>
+      </div>
+    </div>
+
+    <!-- Product Entry -->
+    <div class="row">
+      <div class="col-lg-12">
+
+        <!-- Product Entry -->
+        <div class="card">
+          <div class="card-header">
+            Products Entry
+          </div>
+          <div class="card-body">
+            <form role="form">
+              <div class="form-group">
+                <label for="product-name">Product Name</label>
+                <input type="text" class="form-control" id="product-name">
+              </div>
+              <div class="form-group">
+                <label for="product-department-name">Department Name</label>
+                <input type="text" class="form-control" id="product-department-name">
+              </div>
+              <div class="form-group">
+                <label for="product-price">Price</label>
+                <input type="text" class="form-control" id="product-price">
+              </div>
+              <div class="form-group">
+                <label for="product-stock-quantity">stock-quantity</label>
+                <input type="text" class="form-control" id="product-stock-quantity">
+              </div>
+              <div class="form-group">
+                <label for="product-product-sales">Product Sales</label>
+                <input type="text" class="form-control" id="product-product-sales">
+              </div>
+              <button type="submit" class="btn btn-primary submit">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <a href="/db/products">DB Products List</a>
+        <a href="/db/departments">DB Departments List</a>
+        <a href="/db/deptProdSales">DB Department Sales List</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- BELOW CODE IS CRITICAL. IT HANDLES HOW FORM DATA IS SENT TO OUR SERVER -->
+  <script type="text/javascript">
+    // In this code below we create the Front-end JavaScript which "POSTS" our form data to our express server.
+    // In essence, when the user hits submit, jQuery grabs all of the fields then sends a post request to our api
+    // Our api recognizes the route (/api/tables)... and then runs the associated code (found in api-routes.js).
+    // In this case the associated code "saves" the data to the table-data.js file or waitinglist-data.js file
+
+    $(".submit").on("click", function (event) {
+      event.preventDefault();
+
+      console.log("Here");
+      console.log($("#product-name").val().trim());
+      console.log($("#product-department-name").val().trim());
+      console.log($("#product-price").val().trim());
+      console.log($("#product-stock-quantity").val().trim());
+      console.log($("#product-product-sales").val().trim());
+
+      var newProduct = {
+        productName: $("#product-name").val().trim(),
+        departmentName: $("#product-department-name").val().trim(),
+        price: $("#product-price").val().trim(),
+        stockQuantity: $("#product-stock-quantity").val().trim(),
+        productSales: $("#product-product-sales").val().trim()
+      };
+      console.log(newProduct);
+
+      // This line is the magic. It"s very similar to the standard ajax function we used.
+      // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
+      // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
+      // depending on if a tables is available or not.
+      $.post("/db/products", newProduct,
+        function (data) {
+
+          // If a table is available... tell user they are booked.
+          if (data) {
+            alert("Yay! added a  new product!");
+          }
+
+          // If a table is available... tell user they on the waiting list.
+          else {
+            alert("Did not work");
+          }
+
+          // Clear the form when submitting
+          $("#product-name").val("");
+          $("#product-department-name").val("");
+          $("#product-price").val("");
+          $("#product-stock-quantity").val("");
+          $("#product-product-sales").val("");
+
+        });
+
+    });
+  </script>
+
+</body>
+
+</html>
