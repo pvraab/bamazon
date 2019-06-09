@@ -1,12 +1,3 @@
-// ===============================================================================
-// LOAD DATA
-// We are linking our routes to a series of "data" sources.
-// These data sources hold arrays of information on table-data, waitinglist, etc.
-// ===============================================================================
-
-// var productsData = require("../data/products");
-var departmentsData = require("../data/departmentData");
-
 var mysql = require("mysql");
 
 // Define app variables
@@ -137,7 +128,7 @@ module.exports = function (app) {
     // (ex. User fills out a reservation request... this data is then sent to the server...
     // Then the server saves the data to the productData and departmentData array)
     // ---------------------------------------------------------------------------
-    app.post("/db/products", function (req, res) {
+    app.post("/db/products", function (req, respond) {
         console.log("In product add");
         console.log(req);
         var productName = req.body.productName;
@@ -165,12 +156,12 @@ module.exports = function (app) {
                     function (err) {
                         if (err) throw err;
                         console.log("Product added!");
-                        res.json(true);
+                        respond.json(true);
                     });
             });
     });
 
-    app.post("/db/departments", function (req, res) {
+    app.post("/db/departments", function (req, respond) {
         console.log("In department add");
         console.log(req);
         var departmentName = req.body.departmentName;
@@ -185,7 +176,44 @@ module.exports = function (app) {
             function (err) {
                 if (err) throw err;
                 console.log("Department added!");
-                res.json(true);
+                respond.json(true);
+            });
+    });
+
+    // db DELETE Requests
+    // Below code handles when a user submits a form and thus submits data to the server.
+    // In each of the below cases, when a user submits form data (a JSON object)
+    // ...the JSON is pushed to the appropriate JavaScript array
+    // (ex. User fills out a reservation request... this data is then sent to the server...
+    // Then the server saves the data to the productData and departmentData array)
+    // ---------------------------------------------------------------------------
+    app.delete("/db/products", function (req, respond) {
+        console.log("In product delete");
+        productId = req.body.productId;
+        console.log(productId);
+
+        // Delete a product from database
+        connection.query(
+            "DELETE FROM bamazon.products WHERE product_id = ?", productId,
+            function (err, res) {
+                if (err) throw err;
+                console.log(res);
+                respond.json(true);
+            });
+    });
+
+    app.delete("/db/departments", function (req, respond) {
+        console.log("In department delete");
+        departmentId = req.body.departmentId;
+        console.log(departmentId);
+
+        // Delete a department from database
+        connection.query(
+            "DELETE FROM bamazon.departments WHERE department_id = ?", departmentId,
+            function (err, res) {
+                if (err) throw err;
+                console.log(res);
+                respond.json(true);
             });
     });
 

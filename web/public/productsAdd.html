@@ -58,7 +58,7 @@
                 <input type="text" class="form-control" id="product-price">
               </div>
               <div class="form-group">
-                <label for="product-stock-quantity">stock-quantity</label>
+                <label for="product-stock-quantity">Stock Quantity</label>
                 <input type="text" class="form-control" id="product-stock-quantity">
               </div>
               <div class="form-group">
@@ -92,13 +92,6 @@
     $(".submit").on("click", function (event) {
       event.preventDefault();
 
-      console.log("Here");
-      console.log($("#product-name").val().trim());
-      console.log($("#product-department-name").val().trim());
-      console.log($("#product-price").val().trim());
-      console.log($("#product-stock-quantity").val().trim());
-      console.log($("#product-product-sales").val().trim());
-
       var newProduct = {
         productName: $("#product-name").val().trim(),
         departmentName: $("#product-department-name").val().trim(),
@@ -106,7 +99,6 @@
         stockQuantity: $("#product-stock-quantity").val().trim(),
         productSales: $("#product-product-sales").val().trim()
       };
-      console.log(newProduct);
 
       // This line is the magic. It"s very similar to the standard ajax function we used.
       // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".

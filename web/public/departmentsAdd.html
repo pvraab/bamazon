@@ -50,7 +50,7 @@
                 <input type="text" class="form-control" id="department-name">
               </div>
               <div class="form-group">
-                <label for="department-overhead-costs">Price</label>
+                <label for="department-overhead-costs">Overhead Costs</label>
                 <input type="text" class="form-control" id="department-overhead-costs">
               </div>
               <button type="submit" class="btn btn-primary submit">Submit</button>
@@ -80,15 +80,10 @@
     $(".submit").on("click", function (event) {
       event.preventDefault();
 
-      console.log("Here");
-      console.log($("#department-name").val().trim());
-      console.log($("#department-overhead-costs").val().trim());
-
       var newDepartment = {
         departmentName: $("#department-name").val().trim(),
-        price: $("#department-overhead-costs").val().trim(),
+        overheadCosts: $("#department-overhead-costs").val().trim(),
       };
-      console.log(newDepartment);
 
       // This line is the magic. It"s very similar to the standard ajax function we used.
       // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
@@ -109,10 +104,7 @@
 
           // Clear the form when submitting
           $("#department-name").val("");
-          $("#department-department-name").val("");
-          $("#department-price").val("");
-          $("#department-stock-quantity").val("");
-          $("#department-department-sales").val("");
+          $("#department-overhead-costs").val("");
 
         });
 

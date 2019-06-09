@@ -26,7 +26,7 @@
       <br>
 
       <div class="text-center">
-          <a href="/departments/add"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>Add
+        <a href="/departments/add"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>Add
             Departments</button></a>
         <a href="/products"><button class="btn btn-lg btn-danger"><span class="fa fa-credit-card"></span>
             Products</button></a>
@@ -43,12 +43,12 @@
             <h4>Departments</h4>
           </div>
           <div class="card-body">
-            <table class="table table-sm table-hover" id='departments-table'>
+            <table class="table .table-responsive table-sm table-hover" id='departments-table'>
               <thead>
                 <tr>
                   <th scope="col">Department ID</th>
                   <th scope="col">Department Name</th>
-                  <th scope="col">Overheaad Costs</th>
+                  <th scope="col">Overhead Costs</th>
                 </tr>
               </thead>
               <tbody>
@@ -87,18 +87,21 @@
           for (var i = 0; i < tableData.length; i++) {
 
             // Create update and remove buttons
-            // var updateButton = $("<button>").html("<span class='glyphicon glyphicon-edit'>U</span>").addClass(
-            //   "updateButton").attr("data-key", key);
-            // var removeButton = $("<button>").html("<span class='glyphicon glyphicon-remove'>R</span>").addClass(
-            //   "removeButton").attr("data-key", key);
+            var updateButton = $("<button>").html("<span class='glyphicon glyphicon-edit'>U</span>").addClass(
+              "updateButton").attr("data-key", tableData[i].departmentId);
+            var removeButton = $("<button>").html("<span class='glyphicon glyphicon-remove'>R</span>").addClass(
+              "removeButton").attr("data-key", tableData[i].departmentId);
 
             // Create the new row
             var newRow = $("<tr>").append(
               $("<td>").text(tableData[i].departmentId),
               $("<td>").text(tableData[i].departmentName),
-              $("<td>").text(tableData[i].overheadCosts)
+              $("<td>").text(tableData[i].overheadCosts),
+              $("<td>").html(updateButton),
+              $("<td>").html(removeButton)
             );
-            // newRow.attr("data-key", key);
+            newRow.attr("data-key", tableData[i].departmentId);
+
             // Append the new row to the table
             $("#departments-table > tbody").append(newRow);
 
@@ -121,6 +124,70 @@
     }
 
     $("#clear").on("click", clearTable);
+    $(document).on("click", ".removeButton", removeRow);
+    $(document).on("click", ".updateButton", updateRow);
+
+    function removeRow() {
+      console.log("Remove row ");
+      console.log($(this).attr("data-key"));
+      var id = $(this).attr("data-key");
+      var delDepartment = {
+        departmentId: id
+      };
+      console.log(delDepartment);
+
+      // This line is the magic. It"s very similar to the standard ajax function we used.
+      // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
+      // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
+      // depending on if a tables is available or not.
+      $.ajax({
+          url: "/db/departments",
+          method: "DELETE",
+          data: delDepartment
+        })
+        .then(function (data) {
+
+          // If a table is available... tell user they are booked.
+          if (data) {
+            alert("Yay! deleted department!");
+          }
+
+          // If a table is available... tell user they on the waiting list.
+          else {
+            alert("Did not work");
+          }
+
+        });
+
+    };
+
+    function updateRow() {
+      isUpdate = true;
+      // $("#trainForm").text("Update Train");
+      // $("#add-train-btn").text("Update Train");
+      console.log("Update row ");
+      console.log($(this).attr("data-key"));
+
+      // var thisKey = $(this).attr("data-key");
+      // uid = thisKey;
+      // $('#train-table tr').each(function (i, row) {
+      //     console.log(i);
+      //     console.log(row);
+      //     if (i > 0) {
+      //         console.log($(this).attr("data-key"));
+
+      //         if ($(this).attr("data-key") === thisKey) {
+      //             $("#name-input").val($(row)[0].cells[0].innerText.trim());
+      //             $("#destination-input").val($(row)[0].cells[1].innerText.trim());
+      //             $("#time-input").val($(row)[0].cells[2].innerText.trim());
+      //             $("#freq-input").val($(row)[0].cells[3].innerText.trim());
+      //         }
+      //     }
+      // });
+
+      // // database.ref().child($(this).attr("data-key")).remove();
+      // // reload_page();
+    };
 
     // Run Queries!
     // ==========================================

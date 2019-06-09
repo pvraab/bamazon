@@ -44,7 +44,7 @@
             <h4>Products</h4>
           </div>
           <div class="card-body">
-            <table class="table table-sm table-hover" id="products-table">
+            <table class="table .table-responsive table-sm table-hover" id="products-table">
               <thead>
                 <tr>
                   <!-- The scope attribute specifies that this is a header for a column -->
@@ -139,7 +139,35 @@
     function removeRow() {
         console.log("Remove row ");
         console.log($(this).attr("data-key"));
-        // database.ref().child($(this).attr("data-key")).remove();
+        var id = $(this).attr("data-key");
+        var delProduct = {
+        productId: id
+      };
+      console.log(delProduct);
+
+      // This line is the magic. It"s very similar to the standard ajax function we used.
+      // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
+      // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
+      // depending on if a tables is available or not.
+      $.ajax({
+          url: "/db/products",
+          method: "DELETE",
+          data: delProduct
+        })
+        .then(function (data) {
+
+          // If a table is available... tell user they are booked.
+          if (data) {
+            alert("Yay! deleted product!");
+          }
+
+          // If a table is available... tell user they on the waiting list.
+          else {
+            alert("Did not work");
+          }
+
+        });
+
     };
 
     function updateRow() {
