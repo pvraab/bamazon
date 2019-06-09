@@ -1,4 +1,5 @@
 var mysql = require("mysql");
+require('dotenv').config()
 
 // Define app variables
 var productId = "";
@@ -10,19 +11,37 @@ var stockQuantity = 0;
 var isDbUp = false;
 
 // Create database connection
-var connection = mysql.createConnection({
-    host: "localhost",
+// Use either local or JawsDB
+var connection = null;
+var jawsDBUrl = process.env.JAWSDB_URL;
+console.log(jawsDBUrl);
+// if (jawsDBUrl != null) {
+    console.log("Inside");
+    connection = mysql.createConnection({
+        host: "mysql://g3v9lgqa8h5nq05o.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+        port: 3306,
+        user: "isy00ei4hk25yxi3",
+        // Your password
+        password: "j1p32q8d540y6f83",
+        database: "czvckwex5czquo0u"
 
-    // Your port; if not 3306
-    port: 3306,
+    });
+// } else {
+//     connection = mysql.createConnection({
+//         host: "localhost",
 
-    // Your username
-    user: "root",
+//         // Your port; if not 3306
+//         port: 3306,
 
-    // Your password
-    password: "Nikita2019R",
-    database: "bamazon"
-});
+//         // Your username
+//         user: "root",
+
+//         // Your password
+//         password: "Nikita2019R",
+//         database: "bamazon"
+//     });
+
+// }
 
 // Connect to data base and call initial function connection
 connection.connect(function (err) {
