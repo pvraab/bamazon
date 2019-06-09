@@ -70,7 +70,7 @@ module.exports = function (app) {
                 displayDbUp();
             });
         }
-        var query = "SELECT product_id, product_name, department_name, price, stock_quantity, product_sales FROM bamazon.prod_deptname";
+        var query = "SELECT product_id, product_name, department_name, price, stock_quantity, product_sales FROM prod_deptname";
         var outObj = [];
         connection.query(query, function (err, res) {
             iLen = res.length;
@@ -97,7 +97,7 @@ module.exports = function (app) {
                 displayDbUp();
             });
         }
-        var query = "SELECT department_id, department_name, overhead_costs FROM bamazon.departments";
+        var query = "SELECT department_id, department_name, overhead_costs FROM departments";
         var outObj = [];
         connection.query(query, function (err, res) {
             iLen = res.length;
@@ -121,7 +121,7 @@ module.exports = function (app) {
                 displayDbUp();
             });
         }
-        var query = "SELECT department_id, department_name, overhead_costs, product_sales, total_profit FROM bamazon.prod_sales_by_dept";
+        var query = "SELECT department_id, department_name, overhead_costs, product_sales, total_profit FROM prod_sales_by_dept";
         var outObj = [];
         connection.query(query, function (err, res) {
             iLen = res.length;
@@ -159,13 +159,13 @@ module.exports = function (app) {
         // Add new product to database
         var departmentId = 0;
         connection.query(
-            "SELECT department_id FROM bamazon.departments WHERE department_name = ?", departmentName,
+            "SELECT department_id FROM departments WHERE department_name = ?", departmentName,
             function (err, res) {
                 if (err) throw err;
                 console.log(res);
                 departmentId = res[0].department_id;
                 connection.query(
-                    "INSERT INTO bamazon.products SET ?", {
+                    "INSERT INTO products SET ?", {
                         product_name: productName,
                         department_id: departmentId,
                         price: price,
@@ -188,7 +188,7 @@ module.exports = function (app) {
 
         // Add new department to database
         connection.query(
-            "INSERT INTO bamazon.departments SET ?", {
+            "INSERT INTO departments SET ?", {
                 department_name: departmentName,
                 overhead_costs: overheadCosts
             },
@@ -213,7 +213,7 @@ module.exports = function (app) {
 
         // Delete a product from database
         connection.query(
-            "DELETE FROM bamazon.products WHERE product_id = ?", productId,
+            "DELETE FROM products WHERE product_id = ?", productId,
             function (err, res) {
                 if (err) throw err;
                 console.log(res);
@@ -228,7 +228,7 @@ module.exports = function (app) {
 
         // Delete a department from database
         connection.query(
-            "DELETE FROM bamazon.departments WHERE department_id = ?", departmentId,
+            "DELETE FROM departments WHERE department_id = ?", departmentId,
             function (err, res) {
                 if (err) throw err;
                 console.log(res);
