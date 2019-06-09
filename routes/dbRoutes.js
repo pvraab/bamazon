@@ -18,7 +18,7 @@ console.log(jawsDBUrl);
 // if (jawsDBUrl != null) {
     console.log("Inside");
     connection = mysql.createConnection({
-        host: "mysql://g3v9lgqa8h5nq05o.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+        host: "g3v9lgqa8h5nq05o.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
         port: 3306,
         user: "isy00ei4hk25yxi3",
         // Your password
