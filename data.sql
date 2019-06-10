@@ -1,5 +1,3 @@
-USE `bamazon`;
-
 DELETE FROM products;
 ALTER TABLE products AUTO_INCREMENT = 1;
 DELETE FROM departments;

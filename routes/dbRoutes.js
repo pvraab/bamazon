@@ -11,11 +11,12 @@ var stockQuantity = 0;
 var isDbUp = false;
 
 // Create database connection
-// Use either local or JawsDB
+// Use either local or JawsDB based on .env flag
 var connection = null;
-var jawsDBUrl = process.env.JAWSDB_URL;
-console.log(jawsDBUrl);
-// if (jawsDBUrl != null) {
+var UseJawsDB = process.env.UseJawsDB;
+console.log("UseJawsDB = " + UseJawsDB);
+
+if (UseJawsDB === "yes") {
     console.log("Inside");
     connection = mysql.createConnection({
         host: "g3v9lgqa8h5nq05o.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
@@ -26,22 +27,22 @@ console.log(jawsDBUrl);
         database: "czvckwex5czquo0u"
 
     });
-// } else {
-//     connection = mysql.createConnection({
-//         host: "localhost",
+} else {
+    connection = mysql.createConnection({
+        host: "localhost",
 
-//         // Your port; if not 3306
-//         port: 3306,
+        // Your port; if not 3306
+        port: 3306,
 
-//         // Your username
-//         user: "root",
+        // Your username
+        user: "root",
 
-//         // Your password
-//         password: "Nikita2019R",
-//         database: "bamazon"
-//     });
+        // Your password
+        password: "Nikita2019R",
+        database: "bamazon"
+    });
 
-// }
+}
 
 // Connect to data base and call initial function connection
 connection.connect(function (err) {
@@ -54,22 +55,11 @@ function displayDbUp() {
     isDbUp = true;
 }
 
-// ===============================================================================
 // ROUTING
-// ===============================================================================
-
 module.exports = function (app) {
 
     // db GET Requests from prod_deptname view
-    // ---------------------------------------------------------------------------
     app.get("/db/products", function (req, respond) {
-        while (!isDbUp) {
-            console.log("Trying connection");
-            connection.connect(function (err) {
-                if (err) throw err;
-                displayDbUp();
-            });
-        }
         var query = "SELECT product_id, product_name, department_name, price, stock_quantity, product_sales FROM prod_deptname";
         var outObj = [];
         connection.query(query, function (err, res) {
@@ -82,6 +72,26 @@ module.exports = function (app) {
                     "price": res[i].price,
                     "stockQuantity": res[i].stock_quantity,
                     "productSales": res[i].product_sales
+                }
+                outObj.push(newObj);
+            }
+            respond.json(outObj);
+        });
+    });
+
+    // db GET Requests from prod_sales_by_dept view
+    app.get("/db/product/sales", function (req, respond) {
+        var query = "SELECT department_id, department_name, overhead_costs, product_sales, total_profit FROM prod_sales_by_dept";
+        var outObj = [];
+        connection.query(query, function (err, res) {
+            iLen = res.length;
+            for (var i = 0; i < iLen; i++) {
+                var newObj = {
+                    "departmentId": res[i].department_id,
+                    "departmentName": res[i].department_name,
+                    "overheadCosts": res[i].overhead_costs,
+                    "productSales": res[i].product_sales,
+                    "totalProfit": res[i].total_profit
                 }
                 outObj.push(newObj);
             }

@@ -4,137 +4,205 @@
 
 ## Overview
 
-In this activity, you'll be creating an Amazon-like storefront with the MySQL skills you learned this unit. The app will take in orders from customers and deplete stock from the store's inventory. As a bonus task, you can program your app to track product sales across your store's departments and then provide a summary of the highest-grossing departments in the store.
+Create an Amazon-like storefront with a MySQL backend and an inquirer CLI frontend. The app takes in orders from customers and depletes stock from the store's inventory. The app also allows you to track product sales across the store's departments and then provides a summary of the highest-grossing departments in the store.
 
-Make sure you save and require the MySQL and Inquirer npm packages in your homework files--your app will need them for data input and storage.
+![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image01.gif)
 
-## Submission Guide
+### GitHub Access
 
-Make sure you use the normal GitHub. Because this is a CLI App, there will be no need to deploy it to Heroku. This time, though, you need to include screenshots, a gif, and/or a video showing us that you got the app working with no bugs. You can include these screenshots or a link to a video in a `README.md` file.
+- [Source code repository](<https://github.com/pvraab/bamazon-cli>)
 
-- Include screenshots (or a video) of typical user flows through your application (for the customer and if relevant the manager/supervisor). This includes views of the prompts and the responses after their selection (for the different selection options).
-- Include any other screenshots you deem necessary to help someone who has never been introduced to your application understand the purpose and function of it. This is how you will communicate to potential employers/other developers in the future what you built and why, and to show how it works. 
-- Because screenshots (and well-written READMEs) are extremely important in the context of GitHub, this will be part of the grading.
+  This is a Node.js application so if you want to run it you must:
 
-If you haven't written a markdown file yet, [click here for a rundown](https://guides.github.com/features/mastering-markdown/), or just take a look at the raw file of these instructions.
+  - git clone it to your local machine
+  - cd working directory - use git bash shell
+  - npm install - to install all of the Node.js required packages as described in package.json
+  - node bamazonCustomer.js - this will run the Customer app
+  - node bamazonManager.js - this will run the Manger app
+  - node bamazonSupervisor.js - this will run the Supervisor app
 
-### Commits
+### Challenges
 
-Having an active and healthy commit history on GitHub is important for your future job search. It is also extremely important for making sure your work is saved in your repository. If something breaks, committing often ensures you are able to go back to a working version of your code.
+This was a pretty straightforward application to develop. The use of a view to deliver the product sales by department and total profit functionality was an interesting exercise.
 
-- Committing often is a signal to employers that you are actively working on your code and learning.
-  - We use the mantra “commit early and often.”  This means that when you write code that works, add it and commit it!
-  - Numerous commits allow you to see how your app is progressing and give you a point to revert to if anything goes wrong.
-- Be clear and descriptive in your commit messaging.
-  - When writing a commit message, avoid vague messages like "fixed." Be descriptive so that you and anyone else looking at your repository knows what happened with each commit.
-- We would like you to have well over 200 commits by graduation, so commit early and often!
+### Detailed Functionality and Results
 
-### Submission on BCS
+This application uses a MySQL database to structure and store information for this application (see the appendix for the relevant SQL scripts).
 
-- Please submit the link to the Github Repository!
+- Use a MySQL Database called bamazon.
+- One table inside of that database is called products.
+  - The products table has the following columns:
+    - item_id (unique id for each product)
+    - product_name (name of product)
+    - department_id (foreign key to department table to get department name)
+    - price (cost to customer)
+    - stock_quantity (how much of the product is available in stores)
+    - product_sales column (when a customer purchases anything from the store, the price of the product multiplied by the quantity purchased is added to the product's product_sales column)
+  - This database table is initially populated with 10 different products.
+- Another MySQL table is called departments. 
+  - This table includes the following columns:
+    - department_id (unique id for each department)
+    - department_name (name of department)
+    - overhead_costs (the overhead cost of each department)
 
-## Instructions
+![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image13.gif)
 
-### Challenge #1: Customer View (Minimum Requirement)
+Three Node applications are used to view and manage the data in these tables.
 
-1. Create a MySQL Database called `bamazon`.
-2. Then create a Table inside of that database called `products`.
-3. The products table should have each of the following columns:
-   - item_id (unique id for each product)
-   - product_name (Name of product)
-   - department_name
-   - price (cost to customer)
-   - stock_quantity (how much of the product is available in stores)
-4. Populate this database with around 10 different products. (i.e. Insert "mock" data rows into this database and table).
-5. Then create a Node application called `bamazonCustomer.js`. Running this application will first display all of the items available for sale. Include the ids, names, and prices of products for sale.
-6. The app should then prompt users with two messages.
-   - The first should ask them the ID of the product they would like to buy.
-   - The second message should ask how many units of the product they would like to buy.
-7. Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
-   - If not, the app should log a phrase like `Insufficient quantity!`, and then prevent the order from going through.
-8. However, if your store _does_ have enough of the product, you should fulfill the customer's order.
-   - This means updating the SQL database to reflect the remaining quantity.
-   - Once the update goes through, show the customer the total cost of their purchase.
+### Customer View
+
+- node bamazonCustomer.js  - Runs a Node application providing a customer view that will first display all of the items available for sale including the ids, names, and prices of products for sale.
+- The app prompts users with two messages.
+  - The first asks them the ID of the product they would like to buy.
+  - The second message asks how many units of the product they would like to buy.
+- Once the customer has placed the order, the application checks if the store has enough of the product to meet the customer's request.
+  - If not, the app logs a phrase like `Insufficient quantity!`, and then prompts the useer to try again.
+
+![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image02.gif)
+
+- However, if the store _does_ have enough of the product, the customer's order is fulfilled.
+  - The MySQL database is updated to reflect the remaining quantity and the product sales is increased to reflect the order.
+  - Once the update goes through, customer is shown the total cost of their purchase.
 
 ------
 
-- If this activity took you between 8-10 hours, then you've put enough time into this assignment. Feel free to stop here -- unless you want to take on the next challenge.
+![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image03.gif)
 
 ------
 
-### Challenge #2: Manager View (Next Level)
+### Manager View
 
-- Create a new Node application called `bamazonManager.js`. Running this application will:
+- node bamazonManager.js  - Runs a Node application providing managers view of the store. Running this application will:
+
   - List a set of menu options:
     - View Products for Sale
     - View Low Inventory
     - Add to Inventory
     - Add New Product
-  - If a manager selects `View Products for Sale`, the app should list every available item: the item IDs, names, prices, and quantities.
-  - If a manager selects `View Low Inventory`, then it should list all items with an inventory count lower than five.
-  - If a manager selects `Add to Inventory`, your app should display a prompt that will let the manager "add more" of any item currently in the store.
-  - If a manager selects `Add New Product`, it should allow the manager to add a completely new product to the store.
+    - Exit
+
+  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image04.gif)
+
+  - If a manager selects `View Products for Sale`, the app will list every available item: the item IDs, names, prices, and quantities.
+
+  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image05.gif)
+
+  - If a manager selects `View Low Inventory`, then it will list all items with an inventory count lower than five.
+
+  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/mages/image06.gif)
+
+  - If a manager selects `Add to Inventory`, the app displays a prompt that will let the manager "add more" of any item currently in the store.
+
+  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image07.gif)
+
+  - If a manager selects `Add New Product`, the app allows the manager to add a completely new product to the store.
+
+  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image08.gif)
 
 ------
 
-- If you finished Challenge #2 and put in all the hours you were willing to spend on this activity, then rest easy! Otherwise continue to the next and final challenge.
+### Supervisor View
+
+- node bamazonSupervisor.js  - Runs a Node application that will provide a supervisors view of the store. Running this application will:
+  - list a set of menu options:
+    - View Product Sales by Department
+    - View Departments
+    - Add New Department
+    - Exit
+
+![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image09.gif)
+
+- When a supervisor selects `View Product Sales by Department`, the app displays a summarized table describing the summed product sales and the resulting total profit for each department. This functionality uses a SQL View prod_sales_by_dept described in the appendix of this document to dynamically calculate the total_profit value.
+
+![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image10.gif)
+
+- - When a supervisor selects View Departments, the app displays a the current departments.
+
+  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image11.gif)
+
+  - When a supervisor selects Add New Departments, the app allows the supervisor to add a new department.
+
+  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image12.gif)
+
+### Technologies Used
+
+- MySQL
+- SQL
+- Entity-Relationship diagram (ERD)
+- JavaScript
+- Node.js
+- npm package inquirer to ask questions
+- npm package mysql to allow connections to the MySQL database
+- npm package easy-table to present SQL result sets in table form
+- Good Quality Coding Standards used
+- Deployed on [GitHub](<https://github.com/pvraab/bamazon-cli>)
 
 ------
 
-### Challenge #3: Supervisor View (Final Level)
+- Added To my portfolio at:
 
-1. Create a new MySQL table called `departments`. Your table should include the following columns:
-   - department_id
-   - department_name
-   - over_head_costs (A dummy number you set for each department)
-2. Modify the products table so that there's a product_sales column, and modify your `bamazonCustomer.js` app so that when a customer purchases anything from the store, the price of the product multiplied by the quantity purchased is added to the product's product_sales column.
-   - Make sure your app still updates the inventory listed in the `products` column.
-3. Create another Node app called `bamazonSupervisor.js`. Running this application will list a set of menu options:
-   - View Product Sales by Department
-   - Create New Department
-4. When a supervisor selects `View Product Sales by Department`, the app should display a summarized table in their terminal/bash window. Use the table below as a guide.
+  [My Portfolio](<https://pvraab.github.io/RaabPortfolio/>) - navigate to the portfolio page.
 
-| department_id | department_name | over_head_costs | product_sales | total_profit |
-| ------------- | --------------- | --------------- | ------------- | ------------ |
-| 01            | Electronics     | 10000           | 20000         | 10000        |
-| 02            | Clothing        | 60000           | 100000        | 40000        |
+### Appendix
 
-5. The `total_profit` column should be calculated on the fly using the difference between `over_head_costs` and `product_sales`. `total_profit` should not be stored in any database. You should use a custom alias.
-6. If you can't get the table to display properly after a few hours, then feel free to go back and just add `total_profit` to the `departments` table.
-   - Hint: You may need to look into aliases in MySQL.
-   - Hint: You may need to look into GROUP BYs.
-   - Hint: You may need to look into JOINS.
-   - **HINT**: There may be an NPM package that can log the table to the console. What's is it? Good question :)
+ERD of bamazon schema
 
-### Reminder: Submission on BCS
+![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image13.gif)
 
-- Please submit the link to the Github Repository!
+The following SQL scripts were used to create the bamazon schema objects:
 
-------
+#### Main bamazon schema to create the departments and products tables
 
-### Minimum Requirements
+```
+-- Drop and create `bamazon` schema
+DROP TABLE products;
+DROP TABLE departments;
 
-Attempt to complete homework assignment as described in instructions. If unable to complete certain portions, please pseudocode these portions to describe what remains to be completed. Adding a README.md as well as adding this homework to your portfolio are required as well and more information can be found below.
+-- Table departments`
+CREATE TABLE IF NOT EXISTS departments (
+    `department_id` INT(12) NOT NULL AUTO_INCREMENT,
+    `department_name` VARCHAR(128) NULL DEFAULT NULL,
+    `overhead_costs` DECIMAL(16,2) NOT NULL DEFAULT '0.0000',
+    PRIMARY KEY (`department_id`),
+    INDEX `department_id` (`department_id` ASC)
+);
 
-------
+-- Table products`
+CREATE TABLE IF NOT EXISTS products (
+    `product_id` INT(12) NOT NULL AUTO_INCREMENT,
+    `product_name` VARCHAR(128) NULL DEFAULT NULL,
+    `department_id` INT(12) NOT NULL,
+    `price` DECIMAL(16,2) NOT NULL DEFAULT '0.00',
+    `stock_quantity` INT(12) NOT NULL DEFAULT '0',
+    `product_sales` DECIMAL(16,2) NOT NULL DEFAULT '0.00',
+    PRIMARY KEY (`product_id`),
+    INDEX `product_id` (`product_id` ASC),
+    CONSTRAINT `fk_departments_department_id` FOREIGN KEY (`department_id`)
+        REFERENCES departments` (`department_id`)
+        ON DELETE NO ACTION ON UPDATE NO ACTION
+);
 
-### Create a README.md
+```
 
-Add a `README.md` to your repository describing the project. Here are some resources for creating your `README.md`. Here are some resources to help you along the way:
+#### Product Sales By Department View
 
-- [About READMEs](https://help.github.com/articles/about-readmes/)
-- [Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
+```
+-- Create Product Sales by Department view
+USE bamazon;
 
-------
+CREATE OR REPLACE VIEW prod_sales_by_dept AS
+SELECT 
+    a.department_id,
+    a.department_name,
+    a.overhead_costs,
+    SUM(b.product_sales) product_sales,
+    SUM(b.product_sales) - a.overhead_costs total_profit
+FROM
+    departments a,
+    products b
+WHERE
+    a.department_id = b.department_id
+GROUP BY b.department_id;
 
-### Add To Your Portfolio
+```
 
-After completing the homework please add the piece to your portfolio. Make sure to add a link to your updated portfolio in the comments section of your homework so the TAs can easily ensure you completed this step when they are grading the assignment. To receive an 'A' on any assignment, you must link to it from your portfolio.
-
-------
-
-### One More Thing
-
-If you have any questions about this project or the material we have covered, please post them in the community channels in slack so that your fellow developers can help you! If you're still having trouble, you can come to office hours for assistance from your instructor and TAs.
-
-**Good Luck!**

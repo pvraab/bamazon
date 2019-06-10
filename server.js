@@ -1,19 +1,15 @@
-// ==============================================================================
-// DEPENDENCIES
-// Series of npm packages that we will use to give our server useful functionality
-// ==============================================================================
+// Require express package
 var express = require("express");
 
-// ==============================================================================
-// EXPRESS CONFIGURATION
-// This sets up the basic properties for our express server
-// ==============================================================================
+// Use the dotenv package to enable .env file read
+require('dotenv').config()
 
 // Tells node that we are creating an "express" server
 var app = express();
 
-// Sets an initial port. We"ll use this later in our listener
+// Sets an initial port for the server
 var PORT = process.env.PORT || 8080;
+console.log("Using PORT = " + PORT);
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
