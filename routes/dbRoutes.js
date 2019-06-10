@@ -16,7 +16,7 @@ var connection = null;
 var UseJawsDB = process.env.UseJawsDB;
 console.log("UseJawsDB = " + UseJawsDB);
 
-if (UseJawsDB === "yes") {
+if (UseJawsDB !== "no") {
     console.log("Inside");
     connection = mysql.createConnection({
         host: "g3v9lgqa8h5nq05o.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
