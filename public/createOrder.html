@@ -21,7 +21,7 @@
 
         <div class="jumbotron">
             <h1 class="text-center">
-                <span class="fa fa-fire"></span> Products</h1>
+                <span class="fa fa-fire"></span>Products</h1>
             <hr>
             <h2 class="text-center">Display Your Products</h2>
             <br>
@@ -43,7 +43,9 @@
                         <h4>Products</h4>
                     </div>
                     <div class="card-body">
-                        <table class="table .table-responsive table-sm table-hover" id="products-table">
+                        <table
+                            class="table table-responsive table-striped table-bordered table-condensed table-sm table-hover"
+                            id="products-table">
                             <thead>
                                 <tr>
                                     <!-- The scope attribute specifies that this is a header for a column -->
@@ -72,7 +74,9 @@
                         <h4>Order</h4>
                     </div>
                     <div class="card-body">
-                        <table class="table .table-responsive table-sm table-hover" id="order-table">
+                        <table
+                            class="table table-responsive table-striped table-bordered table-condensed table-sm table-hover"
+                            id="order-table">
                             <thead>
                                 <tr>
                                     <!-- The scope attribute specifies that this is a header for a column -->
@@ -86,8 +90,10 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <a href="#"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>Place Your Order</button></a>
-    
+                        <a href="#"><button class="btn btn-lg btn-primary" id="placeOrder"><span
+                                    class="fa fa-list-alt"></span>Place
+                                Your Order</button></a>
+
                     </div>
                 </div>
             </div>
@@ -106,6 +112,61 @@
 
     <!-- BELOW CODE IS CRITICAL. IT HANDLES HOW FORM DATA IS SENT TO OUR SERVER -->
     <script type="text/javascript">
+        $("#placeOrder").on("click", function (event) {
+            event.preventDefault();
+            console.log("Create order");
+            var iCnt = document.getElementById("order-table").rows.length;
+            console.log("Row = " + iCnt);
+            var jCnt = document.getElementById("order-table").rows[0].cells.length;
+            console.log("Col = " + jCnt);
+            var order = [];
+            for (var i = 1; i < iCnt; i++) {
+                var newOrder = {
+                    productId: document.getElementById("order-table").rows[i].cells[0].textContent.trim(),
+                    price: document.getElementById("order-table").rows[i].cells[2].textContent.trim(),
+                    quantity: document.getElementById("order-table").rows[i].cells[3].textContent.trim()
+                };
+                order.push(newOrder);
+            }
+            console.log(order);
+
+            //     for (var j = 0; j < jCnt; j++) {
+            //         if (j < 3) {
+            //             console.log("Cell = " + document.getElementById("order-table").rows[i].cells[j]
+            //                 .innerHTML);
+            //         } else {
+            //             console.log("Cell = " + document.getElementById("order-table").rows[i].cells[j]
+            //                 .textContent);
+            //         }
+            //     }
+            // }
+            // return;
+
+            // This line is the magic. It"s very similar to the standard ajax function we used.
+            // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
+            // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
+            // depending on if a tables is available or not.
+            $.post("/db/orders", {
+                    order: order
+                },
+                function (data) {
+
+                    // Success
+                    if (data) {
+                        console.log("Yay! added a  new product!");
+                    }
+
+                    // Failure
+                    else {
+                        console.log("Did not work");
+                    }
+
+                    // Clear the table
+                    $("#order-table").find("tr:gt(0)").remove();
+                });
+
+        });
+
         // In this code, jQuery is used to "download" the data from our server
         // We then dynamically display this content in our table. This is very similar to the group projects you just completed.
         // It's also very similar to the NYT search application. In fact, I copied a ton of code from there.
@@ -161,45 +222,21 @@
         $(document).on("click", ".removeButton", removeRow);
         $(document).on("click", ".addButton", addRow);
 
+        // Remove a row from the order table
         function removeRow() {
             console.log("Remove row ");
-            console.log($(this).attr("data-key"));
-            var id = $(this).attr("data-key");
-            var delProduct = {
-                productId: id
-            };
-            console.log(delProduct);
+            console.log($(this));
+            console.log($(this).closest("tr")[0].rowIndex);
 
-            // This line is the magic. It"s very similar to the standard ajax function we used.
-            // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
-            // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
-            // depending on if a tables is available or not.
-            $.ajax({
-                    url: "/db/products",
-                    method: "DELETE",
-                    data: delProduct
-                })
-                .then(function (data) {
+            var index = $(this).closest("tr")[0].rowIndex;
 
-                    // If a table is available... tell user they are booked.
-                    if (data) {
-                        alert("Yay! deleted product!");
-                    }
-
-                    // If a table is available... tell user they on the waiting list.
-                    else {
-                        alert("Did not work");
-                    }
-
-                });
+            document.getElementById("order-table").deleteRow(index);
 
         };
 
         // Add a row to the order table
         function addRow() {
             isUpdate = true;
-            // $("#trainForm").text("Update Train");
-            // $("#add-train-btn").text("Update Train");
             console.log("Add row ");
             console.log($(this).attr("data-key"));
             console.log($(this).closest("tr").find('td:eq(1)').text());
@@ -217,7 +254,7 @@
                 $("<td>").text($(this).closest("tr").find('td:eq(1)').text()),
                 $("<td>").text($(this).closest("tr").find('td:eq(2)').text()),
                 $("<td>").text($(this).closest("tr").find('td:eq(3)').text()),
-                $("<td>").html("<span id='A1' contenteditable>1</span>"),
+                $("<td>").html("<span class='quantity' contenteditable>1</span>"),
                 $("<td>").html(removeButton)
             );
             newRow.attr("data-key", $(this).attr("data-key"));
@@ -225,27 +262,6 @@
             // Append the new row to the table
             $("#order-table > tbody").append(newRow);
 
-
-
-            // var thisKey = $(this).attr("data-key");
-            // uid = thisKey;
-            // $('#train-table tr').each(function (i, row) {
-            //     console.log(i);
-            //     console.log(row);
-            //     if (i > 0) {
-            //         console.log($(this).attr("data-key"));
-
-            //         if ($(this).attr("data-key") === thisKey) {
-            //             $("#name-input").val($(row)[0].cells[0].innerText.trim());
-            //             $("#destination-input").val($(row)[0].cells[1].innerText.trim());
-            //             $("#time-input").val($(row)[0].cells[2].innerText.trim());
-            //             $("#freq-input").val($(row)[0].cells[3].innerText.trim());
-            //         }
-            //     }
-            // });
-
-            // // database.ref().child($(this).attr("data-key")).remove();
-            // // reload_page();
         };
 
         // Run Queries!

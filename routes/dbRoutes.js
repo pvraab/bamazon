@@ -16,6 +16,8 @@ var connection = null;
 var UseJawsDB = process.env.UseJawsDB;
 console.log("UseJawsDB = " + UseJawsDB);
 
+// Open either a JawsDB MySQL connection on Heroku or a local connection
+// to MySQL
 if (UseJawsDB !== "no") {
     console.log("Inside");
     connection = mysql.createConnection({
@@ -182,7 +184,7 @@ module.exports = function (app) {
                         stock_quantity: stockQuantity,
                         product_sales: productSales
                     },
-                    function (err) {
+                    function (err, result) {
                         if (err) throw err;
                         console.log("Product added!");
                         respond.json(true);
@@ -190,6 +192,7 @@ module.exports = function (app) {
             });
     });
 
+    // Add department
     app.post("/db/departments", function (req, respond) {
         console.log("In department add");
         console.log(req);
@@ -207,6 +210,91 @@ module.exports = function (app) {
                 console.log("Department added!");
                 respond.json(true);
             });
+    });
+
+    // Add order return order id
+    app.post("/db/orders", function (req, respond) {
+        console.log("In order add");
+        console.log(req[0]);
+        connection.query(
+            "INSERT INTO orders() VALUES ()",
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                }
+                console.log("Order added!");
+                console.log(result);
+                connection.query(
+                    "INSERT INTO order_details SET ?", {
+                        order_id: result.insertId,
+                        product_id: parseInt(1),
+                        price: parseInt(1),
+                        quantity: parseInt(1),
+                    },
+                    function (err, result) {
+                        if (err) throw err;
+                        console.log("Order detail added!");
+                        console.log(result);
+                        respond.json(true);
+                    });
+
+                respond.json(true);
+            });
+    });
+
+    app.post("/db/orders1", function (req, respond) {
+        console.log("In order add");
+        console.log(req[0]);
+        // console.log(req[0].productId);
+        return;
+        // console.log(req);
+        // Add new department to database
+        connection.query(
+            "INSERT INTO orders() VALUES ()",
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                }
+                console.log("Order added!");
+                // console.log(result);
+
+                for (var i = 0; i < req.len; i++) {
+                    console.log("In loop");
+                    connection.query(
+                        "INSERT INTO order_details SET ?", {
+                            order_id: 1,
+                            product_id: req[i].productId,
+                            price: req[i].price,
+                            quantity: req[i].quantity,
+                        },
+                        function (err, result) {
+                            if (err) throw err;
+                            console.log("Order added!");
+                            console.log(result);
+                            respond.json(true);
+                        });
+                }
+                respond.json(true);
+            });
+
+
+
+        // var departmentName = req.body.departmentName;
+        // var overheadCosts = req.body.overheadCosts;
+
+        // insert into bamazon.orders() values ();
+
+        // // Add new department to database
+        // connection.query(
+        //     "INSERT INTO departments SET ?", {
+        //         department_name: departmentName,
+        //         overhead_costs: overheadCosts
+        //     },
+        //     function (err) {
+        //         if (err) throw err;
+        //         console.log("Department added!");
+        //         respond.json(true);
+        //     });
     });
 
     // db DELETE Requests
