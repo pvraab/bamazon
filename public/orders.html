@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Orders</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Bootstrap scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="jumbotron">
+            <h1 class="text-center">
+                <span class="fa fa-fire"></span>Orders</h1>
+            <hr>
+            <br>
+            <div class="text-center">
+                <a href="/products"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>View
+                        Products</button></a>
+                <a href="/departments"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>View
+                        Departments</button></a>
+                <a href="/"><button class="btn btn-lg btn-default"><span class="fa fa-home"></span></button></a>
+            </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Orders</h4>
+                    </div>
+                    <div class="card-body">
+                        <table
+                            class="table table-responsive table-striped table-bordered table-condensed table-sm table-hover"
+                            id="orders-table">
+                            <thead>
+                                <tr>
+                                    <!-- The scope attribute specifies that this is a header for a column -->
+                                    <th scope="col">Order ID</th>
+                                    <th scope="col">Order Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Details -->
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Order Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <table
+                            class="table table-responsive table-striped table-bordered table-condensed table-sm table-hover"
+                            id="order-details-table">
+                            <thead>
+                                <tr>
+                                    <!-- The scope attribute specifies that this is a header for a column -->
+                                    <th scope="col">Product ID</th>
+                                    <th scope="col">Product Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <a href="/db/products">DB Products List</a>
+                <a href="/db/departments">DB Departments List</a>
+                <a href="/db/deptProdSales">DB Department Sales List</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- BELOW CODE IS CRITICAL. IT HANDLES HOW FORM DATA IS SENT TO OUR SERVER -->
+    <script type="text/javascript">
+        $("#orders-table").on("click", ".orderRow", function (event) {
+            console.log("Click table");
+            // console.log($(this));
+            console.log($(this).closest("tr")[0].rowIndex);
+            // console.log($(this).attr("data-key"));
+            console.log($(this).closest("tr").find('td:eq(0)').text());
+            var orderIndex = parseInt($(this).closest("tr").find('td:eq(0)').text());
+            runOrderDetailQuery(orderIndex);
+        });
+
+        function runOrderDetailQuery(orderId) {
+            console.log("In order details");
+            console.log(orderId);
+            // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
+            $.ajax({
+                    url: "/db/order/details/" + orderId,
+                    method: "GET"
+                })
+                .then(function (tableData) {
+                    // Loop through and display each of the customers
+                    for (var i = 0; i < tableData.length; i++) {
+
+                        // Create the new row
+                        var newRow = $("<tr>").append(
+                            $("<td>").text(tableData[i].productId),
+                            $("<td>").text(tableData[i].productName),
+                            $("<td>").text(tableData[i].price),
+                            $("<td>").text(tableData[i].quantity)
+                        );
+                        newRow.attr("data-key", tableData[i].orderId);
+                        newRow.addClass("orderRow");
+
+                        // Append the new row to the table
+                        $("#order-details-table > tbody").append(newRow);
+
+                    }
+                });
+        };
+
+        // In this code, jQuery is used to "download" the data from our server
+        // We then dynamically display this content in our table. This is very similar to the group projects you just completed.
+        // It's also very similar to the NYT search application. In fact, I copied a ton of code from there.
+
+        function runOrderQuery() {
+            // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
+            $.ajax({
+                    url: "/db/orders",
+                    method: "GET"
+                })
+                .then(function (tableData) {
+                    // Loop through and display each of the customers
+                    for (var i = 0; i < tableData.length; i++) {
+
+                        // Create the new row
+                        var newRow = $("<tr>").append(
+                            $("<td>").text(tableData[i].orderId),
+                            $("<td>").text(tableData[i].orderDate)
+                        );
+                        newRow.attr("data-key", tableData[i].orderId);
+                        newRow.addClass("orderRow");
+
+                        // Append the new row to the table
+                        $("#orders-table > tbody").append(newRow);
+
+                    }
+                });
+        }
+
+        // Run Queries!
+        // ==========================================
+        runOrderQuery();
+    </script>
+
+
+</body>
+
+
+</html>

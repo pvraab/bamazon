@@ -160,14 +160,13 @@ module.exports = function (app) {
     // Then the server saves the data to the productData and departmentData array)
     // ---------------------------------------------------------------------------
     app.post("/db/products", function (req, respond) {
-        console.log("In product add");
+        console.log("In product post");
         console.log(req);
         var productName = req.body.productName;
         var departmentName = req.body.departmentName;
         var price = req.body.price;
         var stockQuantity = req.body.stockQuantity;
         var productSales = req.body.productSales;
-
         // Add new product to database
         var departmentId = 0;
         connection.query(
@@ -192,9 +191,59 @@ module.exports = function (app) {
             });
     });
 
+    // Get product by product_id
+    app.get("/db/products/:productId", function (req, respond) {
+        var productId = req.params.productId;
+        // console.log(req);
+        console.log(productId);
+        var outObj = [];
+        connection.query("SELECT product_id, product_name, department_id, price, stock_quantity, product_sales FROM products WHERE ?", {
+                product_id: productId
+            },
+            function (err, res) {
+                console.log("Here");
+                console.log(res);
+                iLen = res.length;
+                for (var i = 0; i < iLen; i++) {
+                    var newObj = {
+                        "productId": res[i].product_id,
+                        "productName": res[i].product_name,
+                        "departmentId": res[i].department_id,
+                        "price": res[i].price,
+                        "stockQuantity": res[i].stock_quantity,
+                        "productSales": res[i].product_sales
+                    }
+                    outObj.push(newObj);
+                }
+                respond.json(outObj);
+            });
+    });
+
+    // Get department by department_id
+    app.get("/db/departments/:departmentId", function (req, respond) {
+        var departmentId = req.params.departmentId;
+        console.log(departmentId);
+        var outObj = [];
+        connection.query("SELECT department_id, department_name, overhead_costs FROM departments WHERE ?", {
+                department_id: departmentId
+            },
+            function (err, res) {
+                iLen = res.length;
+                for (var i = 0; i < iLen; i++) {
+                    var newObj = {
+                        "departmentId": res[i].department_id,
+                        "departmentName": res[i].department_name,
+                        "overheadCosts": res[i].overhead_costs
+                    }
+                    outObj.push(newObj);
+                }
+                respond.json(outObj);
+            });
+    });
+
     // Add department
     app.post("/db/departments", function (req, respond) {
-        console.log("In department add");
+        console.log("In department post");
         console.log(req);
         var departmentName = req.body.departmentName;
         var overheadCosts = req.body.overheadCosts;
@@ -212,10 +261,72 @@ module.exports = function (app) {
             });
     });
 
+    // Get orders
+    app.get("/db/orders", function (req, respond) {
+        while (!isDbUp) {
+            console.log("Trying connection");
+            connection.connect(function (err) {
+                if (err) throw err;
+                displayDbUp();
+            });
+        }
+        var query = "SELECT order_id, order_date FROM orders";
+        var outObj = [];
+        connection.query(query, function (err, res) {
+            iLen = res.length;
+            for (var i = 0; i < iLen; i++) {
+                var newObj = {
+                    "orderId": res[i].order_id,
+                    "orderDate": res[i].order_date
+                }
+                outObj.push(newObj);
+            }
+            respond.json(outObj);
+        });
+    });
+
+    // Get orders
+    app.get("/db/order/details/:orderId", function (req, respond) {
+        while (!isDbUp) {
+            console.log("Trying connection");
+            connection.connect(function (err) {
+                if (err) throw err;
+                displayDbUp();
+            });
+        }
+        var orderId = req.params.orderId;
+        console.log(req);
+        console.log(orderId);
+        var query = "SELECT product_id, product_name, price, quantity FROM order_prod WHERE order_id = ?";
+        var outObj = [];
+        connection.query("SELECT product_id, product_name, price, quantity FROM order_prod WHERE ?", {
+                order_id: orderId
+            },
+            function (err, res) {
+                iLen = res.length;
+                console.log(res);
+                for (var i = 0; i < iLen; i++) {
+                    var newObj = {
+                        "productId": res[i].product_id,
+                        "productName": res[i].product_name,
+                        "price": res[i].price,
+                        "quantity": res[i].quantity
+                    }
+                    outObj.push(newObj);
+                }
+                respond.json(outObj);
+            });
+    });
+
     // Add order return order id
     app.post("/db/orders", function (req, respond) {
         console.log("In order add");
-        console.log(req[0]);
+        console.log(req.body);
+        var iLen = req.body.length;
+        console.log(iLen);
+        req.body.order.forEach(function (elem) {
+            console.log(elem);
+        });
         connection.query(
             "INSERT INTO orders() VALUES ()",
             function (err, result) {
@@ -224,77 +335,26 @@ module.exports = function (app) {
                 }
                 console.log("Order added!");
                 console.log(result);
-                connection.query(
-                    "INSERT INTO order_details SET ?", {
-                        order_id: result.insertId,
-                        product_id: parseInt(1),
-                        price: parseInt(1),
-                        quantity: parseInt(1),
-                    },
-                    function (err, result) {
-                        if (err) throw err;
-                        console.log("Order detail added!");
-                        console.log(result);
-                        respond.json(true);
-                    });
+                req.body.order.forEach(function (elem) {
+                    console.log(elem);
 
-                respond.json(true);
-            });
-    });
-
-    app.post("/db/orders1", function (req, respond) {
-        console.log("In order add");
-        console.log(req[0]);
-        // console.log(req[0].productId);
-        return;
-        // console.log(req);
-        // Add new department to database
-        connection.query(
-            "INSERT INTO orders() VALUES ()",
-            function (err, result) {
-                if (err) {
-                    console.log(err);
-                }
-                console.log("Order added!");
-                // console.log(result);
-
-                for (var i = 0; i < req.len; i++) {
-                    console.log("In loop");
                     connection.query(
                         "INSERT INTO order_details SET ?", {
-                            order_id: 1,
-                            product_id: req[i].productId,
-                            price: req[i].price,
-                            quantity: req[i].quantity,
+                            order_id: result.insertId,
+                            product_id: elem.productId,
+                            price: elem.price,
+                            quantity: elem.quantity
                         },
                         function (err, result) {
                             if (err) throw err;
-                            console.log("Order added!");
+                            console.log("Order detail added!");
                             console.log(result);
-                            respond.json(true);
                         });
-                }
+                });
+
+
                 respond.json(true);
             });
-
-
-
-        // var departmentName = req.body.departmentName;
-        // var overheadCosts = req.body.overheadCosts;
-
-        // insert into bamazon.orders() values ();
-
-        // // Add new department to database
-        // connection.query(
-        //     "INSERT INTO departments SET ?", {
-        //         department_name: departmentName,
-        //         overhead_costs: overheadCosts
-        //     },
-        //     function (err) {
-        //         if (err) throw err;
-        //         console.log("Department added!");
-        //         respond.json(true);
-        //     });
     });
 
     // db DELETE Requests
@@ -319,6 +379,7 @@ module.exports = function (app) {
             });
     });
 
+    // Delete a department
     app.delete("/db/departments", function (req, respond) {
         console.log("In department delete");
         departmentId = req.body.departmentId;
@@ -330,6 +391,50 @@ module.exports = function (app) {
             function (err, res) {
                 if (err) throw err;
                 console.log(res);
+                respond.json(true);
+            });
+    });
+
+    // Update product
+    app.put("/db/products", function (req, respond) {
+        console.log(req);
+        var query = "UPDATE products SET ? WHERE ?";
+        connection.query(query,
+            [{
+                    product_name: req.body.productName,
+                    price: req.body.price,
+                    stock_quantity: req.body.stockQuantity,
+                    product_sales: req.body.productSales
+                },
+                {
+                    product_id: req.body.productId
+                }
+            ],
+            function (err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                respond.json(true);
+            });
+    });
+
+    // Update department
+    app.put("/db/departments", function (req, respond) {
+        console.log(req);
+        var query = "UPDATE departments SET ? WHERE ?";
+        connection.query(query,
+            [{
+                    department_name: req.body.departmentName,
+                    overhead_costs: req.body.overheadCosts
+                },
+                {
+                    department_id: req.body.departmentId
+                }
+            ],
+            function (err, res) {
+                if (err) {
+                    console.log(err);
+                }
                 respond.json(true);
             });
     });

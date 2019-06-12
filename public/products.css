@@ -1,0 +1,6 @@
+  input[type=text] {
+       padding-top:0px; padding-bottom:0px;
+       margin-bottom:0px; /* Reduced from whatever it currently is */
+       margin-top:0px; /* Reduced from whatever it currently is */
+       height:18px;
+    }

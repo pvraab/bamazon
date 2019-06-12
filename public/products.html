@@ -8,6 +8,7 @@
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./products.css">
 
   <!-- Bootstrap scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -23,7 +24,7 @@
       <h1 class="text-center">
         <span></span><i class="fa fa-product-hunt"></i></span> Products</h1>
       <hr>
-      <h2 class="text-center">Display Your Products</h2>
+      <h2 class="text-center">Products For Sale</h2>
       <br>
       <div class="text-center">
         <a href="/products/add"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>Add
@@ -44,7 +45,8 @@
             <h4>Products</h4>
           </div>
           <div class="card-body">
-            <table class="table table-responsive table-striped table-bordered table-condensed table-sm table-hover" id="products-table">
+            <table class="table table-responsive table-striped table-bordered table-condensed table-sm table-hover"
+              id="products-table">
               <thead>
                 <tr>
                   <!-- The scope attribute specifies that this is a header for a column -->
@@ -66,6 +68,65 @@
       </div>
     </div>
 
+    <!-- Modal dialog to update products -->
+    <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalTitle"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="productModalTitle">Product Update</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="modalText">
+
+            <!-- Product Update -->
+            <form role="form">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label col-form-label-sm" for="product-name">Product Name</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control form-control-sm" id="product-name">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label col-form-label-sm" for="product-department-name">Department
+                  Name</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control form-control-sm" id="product-department-name">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label col-form-label-sm" for="product-price">Price</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control form-control-sm" id="product-price">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label col-form-label-sm" for="product-stock-quantity">Stock
+                  Quantity</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control  form-control-sm" id="product-stock-quantity">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label col-form-label-sm" for="product-product-sales">Product
+                  Sales</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control  form-control-sm" id="product-product-sales">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary submit">Submit</button>
+            </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <footer class="footer">
       <div class="container">
         <a href="/db/products">DB Products List</a>
@@ -78,6 +139,7 @@
 
   <!-- BELOW CODE IS CRITICAL. IT HANDLES HOW FORM DATA IS SENT TO OUR SERVER -->
   <script type="text/javascript">
+    var updateProductId = 0;
     // In this code, jQuery is used to "download" the data from our server
     // We then dynamically display this content in our table. This is very similar to the group projects you just completed.
     // It's also very similar to the NYT search application. In fact, I copied a ton of code from there.
@@ -89,7 +151,8 @@
           method: "GET"
         })
         .then(function (tableData) {
-          // Loop through and display each of the customers
+          
+          // Loop through and display each of the products
           for (var i = 0; i < tableData.length; i++) {
 
             // Create update and remove buttons
@@ -137,10 +200,10 @@
     $(document).on("click", ".updateButton", updateRow);
 
     function removeRow() {
-        console.log("Remove row ");
-        console.log($(this).attr("data-key"));
-        var id = $(this).attr("data-key");
-        var delProduct = {
+      console.log("Remove row ");
+      console.log($(this).attr("data-key"));
+      var id = $(this).attr("data-key");
+      var delProduct = {
         productId: id
       };
       console.log(delProduct);
@@ -158,44 +221,81 @@
 
           // If a table is available... tell user they are booked.
           if (data) {
-            alert("Yay! deleted product!");
+            console.log("Yay! deleted product!");
           }
 
           // If a table is available... tell user they on the waiting list.
           else {
-            alert("Did not work");
+            console.log("Did not work");
           }
 
         });
 
     };
 
+    // Update a product
+    $(".submit").on("click", function (event) {
+      event.preventDefault();
+
+      var newProduct = {
+        productId: updateProductId,
+        productName: $("#product-name").val().trim(),
+        departmentName: $("#product-department-name").val().trim(),
+        price: $("#product-price").val().trim(),
+        stockQuantity: $("#product-stock-quantity").val().trim(),
+        productSales: $("#product-product-sales").val().trim()
+      };
+
+      // This line is the magic. It"s very similar to the standard ajax function we used.
+      // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
+      // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
+      // depending on if a tables is available or not.
+      $.ajax({
+          url: "/db/products",
+          method: "PUT",
+          contentType: 'application/json',
+          data: JSON.stringify(newProduct), // access in body
+
+        })
+        .done(function () {
+          console.log('SUCCESS');
+        }).fail(function (msg) {
+          console.log('FAIL');
+        }).always(function (msg) {
+          console.log('ALWAYS');
+        });
+
+      // Clear the form when submitting
+      $("#product-name").val("");
+      $("#product-department-name").val("");
+      $("#product-price").val("");
+      $("#product-stock-quantity").val("");
+      $("#product-product-sales").val("");
+
+    });
+
     function updateRow() {
-        isUpdate = true;
-        // $("#trainForm").text("Update Train");
-        // $("#add-train-btn").text("Update Train");
-        console.log("Update row ");
-        console.log($(this).attr("data-key"));
+      isUpdate = true;
+      console.log("Update row");
+      console.log($(this).attr("data-key"));
+      $('#productModal').modal('show');
+      updateProductId = $(this).attr("data-key");
 
-        // var thisKey = $(this).attr("data-key");
-        // uid = thisKey;
-        // $('#train-table tr').each(function (i, row) {
-        //     console.log(i);
-        //     console.log(row);
-        //     if (i > 0) {
-        //         console.log($(this).attr("data-key"));
-
-        //         if ($(this).attr("data-key") === thisKey) {
-        //             $("#name-input").val($(row)[0].cells[0].innerText.trim());
-        //             $("#destination-input").val($(row)[0].cells[1].innerText.trim());
-        //             $("#time-input").val($(row)[0].cells[2].innerText.trim());
-        //             $("#freq-input").val($(row)[0].cells[3].innerText.trim());
-        //         }
-        //     }
-        // });
-
-        // // database.ref().child($(this).attr("data-key")).remove();
-        // // reload_page();
+      $.ajax({
+          url: "/db/products/" + updateProductId,
+          method: "GET"
+        })
+        .then(function (tableData) {
+          // Loop through and display each of the customers
+          for (var i = 0; i < tableData.length; i++) {
+            // Clear the form when submitting
+            $("#product-name").val(tableData[i].productName);
+            $("#product-department-name").val(tableData[i].departmentId);
+            $("#product-price").val(tableData[i].price);
+            $("#product-stock-quantity").val(tableData[i].stockQuantity);
+            $("#product-product-sales").val(tableData[i].productSales);
+          }
+        });
     };
 
     // Run Queries!
