@@ -368,7 +368,7 @@ module.exports = function (app) {
         console.log("In check order");
         var productId = elem.productId;
         var quantity = elem.quantity;
-        var query = "SELECT product_name, price, stock_quantity FROM bamazon.products WHERE product_id = ?";
+        var query = "SELECT product_name, price, stock_quantity FROM products WHERE product_id = ?";
         connection.query(query, productId, function (err, res) {
             productName = res[0].product_name;
             stockQuantity = parseInt(res[0].stock_quantity);
@@ -391,7 +391,7 @@ module.exports = function (app) {
         console.log("In place item order");
         var productId = elem.productId;
         var quantity = elem.quantity;
-        var query = "SELECT product_name, price, stock_quantity, product_sales FROM bamazon.products WHERE product_id = ?";
+        var query = "SELECT product_name, price, stock_quantity, product_sales FROM products WHERE product_id = ?";
         connection.query(query, productId, function (err, res) {
             var productName = res[0].product_name;
             var price = parseFloat(res[0].price);
