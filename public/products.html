@@ -8,7 +8,9 @@
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="./products.css">
+  <!-- <link rel="stylesheet" href="./app.css"> -->
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <!-- Bootstrap scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -27,9 +29,9 @@
       <h2 class="text-center">Products For Sale</h2>
       <br>
       <div class="text-center">
-        <a href="/products/add"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>Add
+        <a href="/products/add"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span> Add
             Products</button></a>
-        <a href="/departments"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span>View
+        <a href="/departments"><button class="btn btn-lg btn-primary"><span class="fa fa-list-alt"></span> View
             Departments</button></a>
         <a href="/"><button class="btn btn-lg btn-default"><span class="fa fa-home"></span></button></a>
       </div>
@@ -40,30 +42,24 @@
       <div class="col-md-12">
 
         <!-- Products-->
-        <div class="card mb-4">
-          <div class="card-header">
-            <h4>Products</h4>
-          </div>
-          <div class="card-body">
-            <table class="table table-responsive table-striped table-bordered table-condensed table-sm table-hover"
-              id="products-table">
-              <thead>
-                <tr>
-                  <!-- The scope attribute specifies that this is a header for a column -->
-                  <th scope="col">Product ID</th>
-                  <th scope="col">Product Name</th>
-                  <th scope="col">Department Name</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Stock Quantity</th>
-                  <th scope="col">Product Sales</th>
-                  <th scope="col">Update</th>
-                  <th scope="col">Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </div>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered table-condensed table-sm table-hover" id="products-table">
+            <thead>
+              <tr>
+                <!-- The scope attribute specifies that this is a header for a column -->
+                <th scope="col">Product ID</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Department Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Stock Quantity</th>
+                <th scope="col">Product Sales</th>
+                <th scope="col">Update</th>
+                <th scope="col">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -151,7 +147,7 @@
           method: "GET"
         })
         .then(function (tableData) {
-          
+
           // Loop through and display each of the products
           for (var i = 0; i < tableData.length; i++) {
 
@@ -254,7 +250,7 @@
           url: "/db/products",
           method: "PUT",
           contentType: 'application/json',
-          data: JSON.stringify(newProduct), // access in body
+          data: JSON.stringify(newProduct) // access in body
 
         })
         .done(function () {

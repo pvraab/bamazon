@@ -3,11 +3,6 @@ require('dotenv').config()
 
 // Define app variables
 var productId = "";
-var productName = "";
-var departmentName = "";
-var price = 0;
-var quantity = 0;
-var stockQuantity = 0;
 var isDbUp = false;
 
 // Create database connection
@@ -101,6 +96,7 @@ module.exports = function (app) {
         });
     });
 
+    // Get departments
     app.get("/db/departments", function (req, respond) {
         while (!isDbUp) {
             console.log("Trying connection");
@@ -125,6 +121,7 @@ module.exports = function (app) {
         });
     });
 
+    // Get product sales by department
     app.get("/db/deptProdSales", function (req, respond) {
         while (!isDbUp) {
             console.log("Trying connection");
@@ -153,11 +150,6 @@ module.exports = function (app) {
     });
 
     // db POST Requests
-    // Below code handles when a user submits a form and thus submits data to the server.
-    // In each of the below cases, when a user submits form data (a JSON object)
-    // ...the JSON is pushed to the appropriate JavaScript array
-    // (ex. User fills out a reservation request... this data is then sent to the server...
-    // Then the server saves the data to the productData and departmentData array)
     // ---------------------------------------------------------------------------
     app.post("/db/products", function (req, respond) {
         console.log("In product post");
@@ -324,9 +316,23 @@ module.exports = function (app) {
         console.log(req.body);
         var iLen = req.body.length;
         console.log(iLen);
+
+        // Check each item for enough quantity in stock
         req.body.order.forEach(function (elem) {
             console.log(elem);
+            var isValid = checkOrder(elem);
+            if (!isValid) {
+                console.log("Not enough of ");
+                console.log(elem);
+                return;
+            }
         });
+
+        // Process order items - decrement quantity in DB
+        req.body.order.forEach(function (elem) {
+            placeItemOrder(elem);
+        });
+
         connection.query(
             "INSERT INTO orders() VALUES ()",
             function (err, result) {
@@ -356,6 +362,72 @@ module.exports = function (app) {
                 respond.json(true);
             });
     });
+
+    // Check order item to make sure there is enough product
+    function checkOrder(elem) {
+        console.log("In check order");
+        var productId = elem.productId;
+        var quantity = elem.quantity;
+        var query = "SELECT product_name, price, stock_quantity FROM bamazon.products WHERE product_id = ?";
+        connection.query(query, productId, function (err, res) {
+            productName = res[0].product_name;
+            stockQuantity = parseInt(res[0].stock_quantity);
+            var q = parseInt(quantity);
+            // If enough place order
+            if (stockQuantity >= q) {
+                var isValid = true;
+                return isValid;
+            }
+            // If not try again
+            else {
+                var isValid = false;
+                return isValid;
+            }
+        });
+    }
+
+    // Place item order
+    function placeItemOrder(elem) {
+        console.log("In place item order");
+        var productId = elem.productId;
+        var quantity = elem.quantity;
+        var query = "SELECT product_name, price, stock_quantity, product_sales FROM bamazon.products WHERE product_id = ?";
+        connection.query(query, productId, function (err, res) {
+            var productName = res[0].product_name;
+            var price = parseFloat(res[0].price);
+            var stockQuantity = parseInt(res[0].stock_quantity);
+            var productSales = parseFloat(res[0].product_sales);
+            console.log(productSales);
+            var q = parseInt(quantity);
+
+            if (stockQuantity >= q) {
+                price = parseInt(res[0].price);
+                productSales = parseFloat(productSales) + (parseFloat(price) * parseInt(quantity));
+                console.log(productSales);
+                var newQuantity = parseInt(stockQuantity) - parseInt(quantity);
+                var query = "UPDATE products SET ? WHERE ?";
+                connection.query(query,
+                    [{
+                            stock_quantity: newQuantity,
+                            product_sales: parseFloat(productSales)
+
+                        },
+                        {
+                            product_id: parseInt(productId)
+                        }
+                    ],
+                    function (err, res1) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        console.log("Update quantity");
+                        console.log(res1);
+                        console.log("Your order was " + quantity + " items of ID = " + productId + " Name: " + productName);
+                        console.log("Your cost is " + (parseFloat(price) * parseInt(quantity)) + " dollars");
+                    });
+            }
+        });
+    };
 
     // db DELETE Requests
     // Below code handles when a user submits a form and thus submits data to the server.

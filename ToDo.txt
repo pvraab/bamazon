@@ -4,3 +4,11 @@ More checking - no empty values - allow for updates
 Make sure when you delete parent Department clear FK from products
 When change to table, update view - trigger?
 
+App Breaks
+Enter new product - bad department id
+
+Allow only one product line of each type in order
+
+Handle updating all links if a product or department is deleted or updated.
+
+Put dollar signs on prices/costs.

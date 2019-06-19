@@ -1,29 +1,19 @@
-# Bamazon
 
-# Node.js & MySQL
+
+# Bamazon - Node.js & MySQL
 
 ## Overview
 
-Create an Amazon-like storefront with a MySQL backend and an inquirer CLI frontend. The app takes in orders from customers and depletes stock from the store's inventory. The app also allows you to track product sales across the store's departments and then provides a summary of the highest-grossing departments in the store.
-
-![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image01.gif)
+Create an Amazon-like storefront with a MySQL backend and a HTML/CSS Bootstrap frontend. The app displays and manages products and departments, takes in orders from customers, and depletes stock from the store's inventory. The app also allows you to track product sales across the store's departments and then provides a summary of the highest-grossing departments in the store.
 
 ### GitHub Access
 
-- [Source code repository](<https://github.com/pvraab/bamazon-cli>)
-
-  This is a Node.js application so if you want to run it you must:
-
-  - git clone it to your local machine
-  - cd working directory - use git bash shell
-  - npm install - to install all of the Node.js required packages as described in package.json
-  - node bamazonCustomer.js - this will run the Customer app
-  - node bamazonManager.js - this will run the Manger app
-  - node bamazonSupervisor.js - this will run the Supervisor app
+- [Source code repository](<https://github.com/pvraab/bamazon>)
+- [Application URL](<https://pvraab-bamazon.herokuapp.com/>) - Hosted on Heroku so we can run the Express server and use the JawsDB MySQL server.
 
 ### Challenges
 
-This was a pretty straightforward application to develop. The use of a view to deliver the product sales by department and total profit functionality was an interesting exercise.
+This was a pretty straightforward application to develop. The use of a view to deliver the product sales by department and total profit functionality was an interesting exercise. Setting up the app to run on Heroku was also interesting.
 
 ### Detailed Functionality and Results
 
@@ -39,103 +29,112 @@ This application uses a MySQL database to structure and store information for th
     - stock_quantity (how much of the product is available in stores)
     - product_sales column (when a customer purchases anything from the store, the price of the product multiplied by the quantity purchased is added to the product's product_sales column)
   - This database table is initially populated with 10 different products.
-- Another MySQL table is called departments. 
+- A MySQL table called departments. 
   - This table includes the following columns:
     - department_id (unique id for each department)
     - department_name (name of department)
     - overhead_costs (the overhead cost of each department)
+- A MySQL table called orders.
+  - This table includes the following columns:
+    - order_id  (unique id for each order)
+    - order_date (date order placed)
+- A MySQL table called order_details.
+  - This table includes the following columns:
+    - order_detail_id
+    - order_id
+    - product_id
+    - quantity
+    - price
 
-![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image13.gif)
+![](./images/image01.gif)
 
-Three Node applications are used to view and manage the data in these tables.
+Several HTML pages are used to view and manage the data in these tables.
 
-### Customer View
+### Main View
 
-- node bamazonCustomer.js  - Runs a Node application providing a customer view that will first display all of the items available for sale including the ids, names, and prices of products for sale.
-- The app prompts users with two messages.
-  - The first asks them the ID of the product they would like to buy.
-  - The second message asks how many units of the product they would like to buy.
-- Once the customer has placed the order, the application checks if the store has enough of the product to meet the customer's request.
-  - If not, the app logs a phrase like `Insufficient quantity!`, and then prompts the useer to try again.
+- The Main view presents the user with a splash page with a number of buttons and links that allow access to different functions.
 
-![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image02.gif)
+![](./images/image02.gif)
 
-- However, if the store _does_ have enough of the product, the customer's order is fulfilled.
-  - The MySQL database is updated to reflect the remaining quantity and the product sales is increased to reflect the order.
-  - Once the update goes through, customer is shown the total cost of their purchase.
+- The "View Products" button selects the Product view where products can be viewed, added, and edited.
+- The "View Departments" button selects the Department view where departments can be viewed, added, and edited.
+- The "Product Sales By Department" button selects the view where total product sales by department can be viewed.
+- The "Create Order" button selects the Order view where a user can create and manage an order.
+- The "View Orders" button selects the Order view where order can be viewed.
 
-------
+### Product View
 
-![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image03.gif)
+- Display all of the items available for sale including the ids, names, departments, prices, stock quantity, and current product sales.
 
-------
+![](./images/image03.gif)
 
-### Manager View
+- The user can update any product item by clicking on the "U" button at the right of each row. This will bring up a Modal where each field can be edited and then saved to the MySQL database.
 
-- node bamazonManager.js  - Runs a Node application providing managers view of the store. Running this application will:
+![](./images/image04.gif)
 
-  - List a set of menu options:
-    - View Products for Sale
-    - View Low Inventory
-    - Add to Inventory
-    - Add New Product
-    - Exit
+- The user can also select the "Close" button to exit the Modal without updating the product.
+- The "R" remove button at the end of each row will remove a product from the database.
 
-  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image04.gif)
+### Department View
 
-  - If a manager selects `View Products for Sale`, the app will list every available item: the item IDs, names, prices, and quantities.
+- Display all of the departments including the ids, names, and overhead costs.
 
-  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image05.gif)
+![](./images/image05.gif)
 
-  - If a manager selects `View Low Inventory`, then it will list all items with an inventory count lower than five.
+- The user can update any department by clicking on the "U" button at the right of each row. This will bring up a Modal where each field can be edited and then saved to the MySQL database.
 
-  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/mages/image06.gif)
+![](./images/image06.gif)
 
-  - If a manager selects `Add to Inventory`, the app displays a prompt that will let the manager "add more" of any item currently in the store.
+- The user can also select the "Close" button to exit the Modal without updating the department.
+- The "R" remove button at the end of each row will remove a department from the database.
 
-  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image07.gif)
+### Product Sales By Department View
 
-  - If a manager selects `Add New Product`, the app allows the manager to add a completely new product to the store.
+- Display  a summarized table describing the summed product sales and the resulting total profit for each department. This functionality uses a SQL View prod_sales_by_dept described in the appendix of this document to dynamically calculate the total_profit value.all of the departments including the ids, names, and overhead costs.
 
-  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image08.gif)
+![](./images/image07.gif)
 
-------
 
-### Supervisor View
+### Create Order View
 
-- node bamazonSupervisor.js  - Runs a Node application that will provide a supervisors view of the store. Running this application will:
-  - list a set of menu options:
-    - View Product Sales by Department
-    - View Departments
-    - Add New Department
-    - Exit
+- Create an order.
 
-![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image09.gif)
+![](./images/image08.gif)
 
-- When a supervisor selects `View Product Sales by Department`, the app displays a summarized table describing the summed product sales and the resulting total profit for each department. This functionality uses a SQL View prod_sales_by_dept described in the appendix of this document to dynamically calculate the total_profit value.
+- The user can select any of the products displayed by clicking on the "A" button at the end of each row.
+- The products are then placed in an order table at the bottom of the page.
 
-![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image10.gif)
+![](./images/image09.gif)
 
-- - When a supervisor selects View Departments, the app displays a the current departments.
+- The user can then update the quantities in the editable Quantity cell, they can remove a product from the order by clicking on the "R" remove button, or they can select the "Place your Order" button to place your order. When the order is placed, quantities in stock for each item are checked, and if sufficient, then an order is created in the database and existing stock quantities are decremented.
 
-  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image11.gif)
+### Order View
 
-  - When a supervisor selects Add New Departments, the app allows the supervisor to add a new department.
+- Display all orders and enable specific order selection and display.
 
-  ![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image12.gif)
+![](./images/image10.gif)
+
+
+
+- You select a specific order by clicking on a row and then the Order Details table is populated.
+
+
+
+![](./images/image11.gif)
 
 ### Technologies Used
 
+- HTML/CSS
 - MySQL
 - SQL
 - Entity-Relationship diagram (ERD)
 - JavaScript
+- Express
 - Node.js
-- npm package inquirer to ask questions
+- Heroku with JawsDB MySQL add on
 - npm package mysql to allow connections to the MySQL database
-- npm package easy-table to present SQL result sets in table form
 - Good Quality Coding Standards used
-- Deployed on [GitHub](<https://github.com/pvraab/bamazon-cli>)
+- Deployed on [GitHub](<https://github.com/pvraab/bamazon>)
 
 ------
 
@@ -147,41 +146,62 @@ Three Node applications are used to view and manage the data in these tables.
 
 ERD of bamazon schema
 
-![](C:/Users/Paul/BootCamp/HomeWork/HW12/bamazon-cli/images/image13.gif)
+![](./images/image01.gif)
 
 The following SQL scripts were used to create the bamazon schema objects:
 
 #### Main bamazon schema to create the departments and products tables
 
 ```
--- Drop and create `bamazon` schema
-DROP TABLE products;
-DROP TABLE departments;
+DROP TABLE IF EXISTS order_details;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS departments;
 
--- Table departments`
+-- Table departments
 CREATE TABLE IF NOT EXISTS departments (
-    `department_id` INT(12) NOT NULL AUTO_INCREMENT,
-    `department_name` VARCHAR(128) NULL DEFAULT NULL,
-    `overhead_costs` DECIMAL(16,2) NOT NULL DEFAULT '0.0000',
-    PRIMARY KEY (`department_id`),
-    INDEX `department_id` (`department_id` ASC)
+    department_id INT(12) NOT NULL AUTO_INCREMENT,
+    department_name VARCHAR(128) NULL DEFAULT NULL,
+    overhead_costs DECIMAL(16,2) NOT NULL DEFAULT '0.00',
+    PRIMARY KEY (department_id),
+    INDEX department_id (department_id ASC)
 );
 
--- Table products`
+-- Table products
 CREATE TABLE IF NOT EXISTS products (
-    `product_id` INT(12) NOT NULL AUTO_INCREMENT,
-    `product_name` VARCHAR(128) NULL DEFAULT NULL,
-    `department_id` INT(12) NOT NULL,
-    `price` DECIMAL(16,2) NOT NULL DEFAULT '0.00',
-    `stock_quantity` INT(12) NOT NULL DEFAULT '0',
-    `product_sales` DECIMAL(16,2) NOT NULL DEFAULT '0.00',
-    PRIMARY KEY (`product_id`),
-    INDEX `product_id` (`product_id` ASC),
-    CONSTRAINT `fk_departments_department_id` FOREIGN KEY (`department_id`)
-        REFERENCES departments` (`department_id`)
+    product_id INT(12) NOT NULL AUTO_INCREMENT,
+    product_name VARCHAR(128) NOT NULL,
+    department_id INT(12) NOT NULL,
+    price DECIMAL(16,2) NOT NULL DEFAULT '0.00',
+    stock_quantity INT(12) NOT NULL DEFAULT '0',
+    product_sales DECIMAL(16,2) NOT NULL DEFAULT '0.00',
+    PRIMARY KEY (product_id),
+    INDEX product_id (product_id ASC),
+    CONSTRAINT fk_departments_department_id FOREIGN KEY (department_id)
+        REFERENCES departments (department_id)
         ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
+CREATE TABLE IF NOT EXISTS orders (
+    order_id INT(12) NOT NULL AUTO_INCREMENT,
+    order_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (order_id),
+    INDEX order_id (order_id ASC)
+);
+
+CREATE TABLE order_details (
+    order_detail_id INT(12) NOT NULL AUTO_INCREMENT,
+    order_id INT(12) NOT NULL,
+    product_id INT(12) NOT NULL,
+    quantity INT(12) NOT NULL DEFAULT '0',
+    price DECIMAL(16,2) DEFAULT '0.00',
+    PRIMARY KEY (order_detail_id),
+    INDEX order_detail_id (order_detail_id ASC),
+    CONSTRAINT fk_orders_order_id FOREIGN KEY (order_id)
+        REFERENCES orders (order_id),
+    CONSTRAINT fk_products_product_id FOREIGN KEY (product_id)
+        REFERENCES products (product_id)
+);
 ```
 
 #### Product Sales By Department View
