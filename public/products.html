@@ -143,9 +143,9 @@
     function runProductQuery() {
       // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
       $.ajax({
-          url: "/db/products",
-          method: "GET"
-        })
+        url: "/db/products",
+        method: "GET"
+      })
         .then(function (tableData) {
 
           // Loop through and display each of the products
@@ -209,15 +209,16 @@
       // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
       // depending on if a tables is available or not.
       $.ajax({
-          url: "/db/products",
-          method: "DELETE",
-          data: delProduct
-        })
+        url: "/db/products",
+        method: "DELETE",
+        data: delProduct
+      })
         .then(function (data) {
 
           // If a table is available... tell user they are booked.
           if (data) {
-            console.log("Yay! deleted product!");
+              console.log("Yay! deleted product!");
+              location.reload()
           }
 
           // If a table is available... tell user they on the waiting list.
@@ -247,12 +248,12 @@
       // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
       // depending on if a tables is available or not.
       $.ajax({
-          url: "/db/products",
-          method: "PUT",
-          contentType: 'application/json',
-          data: JSON.stringify(newProduct) // access in body
+        url: "/db/products",
+        method: "PUT",
+        contentType: 'application/json',
+        data: JSON.stringify(newProduct) // access in body
 
-        })
+      })
         .done(function () {
           console.log('SUCCESS');
         }).fail(function (msg) {
@@ -267,7 +268,7 @@
       $("#product-price").val("");
       $("#product-stock-quantity").val("");
       $("#product-product-sales").val("");
-
+      location.reload()
     });
 
     function updateRow() {
@@ -278,15 +279,15 @@
       updateProductId = $(this).attr("data-key");
 
       $.ajax({
-          url: "/db/products/" + updateProductId,
-          method: "GET"
-        })
+        url: "/db/products/" + updateProductId,
+        method: "GET"
+      })
         .then(function (tableData) {
           // Loop through and display each of the customers
           for (var i = 0; i < tableData.length; i++) {
             // Clear the form when submitting
             $("#product-name").val(tableData[i].productName);
-            $("#product-department-name").val(tableData[i].departmentId);
+            $("#product-department-name").val(tableData[i].departmentName);
             $("#product-price").val(tableData[i].price);
             $("#product-stock-quantity").val(tableData[i].stockQuantity);
             $("#product-product-sales").val(tableData[i].productSales);

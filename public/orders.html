@@ -102,19 +102,24 @@
 
     <!-- BELOW CODE IS CRITICAL. IT HANDLES HOW FORM DATA IS SENT TO OUR SERVER -->
     <script type="text/javascript">
+
         $("#orders-table").on("click", ".orderRow", function (event) {
-            console.log("Click table");
-            // console.log($(this));
+            console.log($(this).closest("tr"));
             console.log($(this).closest("tr")[0].rowIndex);
-            // console.log($(this).attr("data-key"));
             console.log($(this).closest("tr").find('td:eq(0)').text());
+            $(this).closest("tr").addClass('bg-success').siblings().removeClass('bg-success');
             var orderIndex = parseInt($(this).closest("tr").find('td:eq(0)').text());
+
+            // $(this).closest("tr").addClass('active').siblings().removeClass('active');
+
             runOrderDetailQuery(orderIndex);
         });
 
         function runOrderDetailQuery(orderId) {
-            console.log("In order details");
-            console.log(orderId);
+
+            // Clear current order detail rows below header
+            $("#order-details-table").find("tr:gt(0)").remove();
+
             // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
             $.ajax({
                     url: "/db/order/details/" + orderId,
@@ -141,18 +146,17 @@
                 });
         };
 
-        // In this code, jQuery is used to "download" the data from our server
-        // We then dynamically display this content in our table. This is very similar to the group projects you just completed.
-        // It's also very similar to the NYT search application. In fact, I copied a ton of code from there.
-
+        // Get the orders
         function runOrderQuery() {
-            // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
+
+            // The AJAX function uses a route to GET the data
             $.ajax({
                     url: "/db/orders",
                     method: "GET"
                 })
                 .then(function (tableData) {
-                    // Loop through and display each of the customers
+
+                    // Loop through and display each of the orders
                     for (var i = 0; i < tableData.length; i++) {
 
                         // Create the new row
@@ -161,7 +165,7 @@
                             $("<td>").text(tableData[i].orderDate)
                         );
                         newRow.attr("data-key", tableData[i].orderId);
-                        newRow.addClass("orderRow");
+                        newRow.addClass("orderRow clickable-row");
 
                         // Append the new row to the table
                         $("#orders-table > tbody").append(newRow);

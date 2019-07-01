@@ -195,6 +195,7 @@
           // If a table is available... tell user they are booked.
           if (data) {
             console.log("Yay! deleted department!");
+            location.reload();
           }
 
           // If a table is available... tell user they on the waiting list.
@@ -238,6 +239,7 @@
       // Clear the form when submitting
       $("#department-name").val("");
       $("#department-overhead-costs").val("");
+      location.reload();
 
     });
 
